@@ -1,4 +1,5 @@
 from model.project import Project
+import re
 
 
 class ProjectHelper:
@@ -23,22 +24,26 @@ class ProjectHelper:
         self.fill_project_form(project)
         wd.find_element_by_xpath("//input[@value='Добавить проект']").click()
         wd.find_element_by_link_text("Продолжить").click()
+        self.projects_cache = None
 
     def count(self):
         wd = self.app.wd
         self.open_manage_proj_page()
-        projects = wd.find_elements_by_css_selector("a[$href='manage_proj_edit_page.php?project_id=']")
+        projects = wd.find_elements_by_xpath("/html/body/div[2]/div[2]/div[2]/div/div/div[2]/div[2]/div/div[2]/table/tbody/tr")
         return len(projects)
 
     def check_for_test_project(self):
-        if self.count == 0:
-            self.add_new_project(Project(name='test'))
+        if self.count() == 0:
+            self.add_new_project(Project(name='test', status='в разработке', inherit=True, view_state='публичный',
+                                         description='sdfgadga'))
 
-    def delete_random_project(self):
-        pass
-
-    def get_list(self):
-        pass
+    def delete_project(self, project):
+        wd = self.app.wd
+        self.open_manage_proj_page()
+        wd.find_element_by_xpath(f"//td/a[text()='{project.name}']").click()
+        wd.find_element_by_css_selector("input[value='Удалить проект']").click()
+        wd.find_element_by_css_selector("input[value='Удалить проект']").click()
+        self.projects_cache = None
 
     def fill_project_form(self, project):
         wd = self.app.wd
@@ -54,3 +59,28 @@ class ProjectHelper:
         wd.find_element_by_id("project-description").click()
         wd.find_element_by_id("project-description").clear()
         wd.find_element_by_id("project-description").send_keys(project.description)
+
+    projects_cache = None
+
+    def get_list(self):
+        if self.projects_cache is None:
+            wd = self.app.wd
+            self.open_manage_proj_page()
+            self.projects_cache = []
+            table = wd.find_elements_by_xpath("/html/body/div[2]/div[2]/div[2]/div/div/div[2]/div[2]/div/div[2]/table/tbody/tr")
+            for element in table:
+                project_id = re.findall(r'\d+', element.find_element_by_xpath("./td[1]/a").get_attribute("href"))[-1]
+                name = element.find_element_by_xpath("./td[1]/a").text
+                status = element.find_element_by_xpath("./td[2]").text
+                if len(element.find_elements_by_xpath("./td[3]/i[@class='fa fa-check fa-lg']")) == 1:
+                    active = True
+                else:
+                    active = False
+                view_state = element.find_element_by_xpath("./td[4]").text
+                description = element.find_element_by_xpath("./td[5]").text
+                self.projects_cache.append(
+                    Project(id=project_id, name=name, status=status, active=active, view_state=view_state,
+                            description=description)
+                )
+        return list(self.projects_cache)
+
