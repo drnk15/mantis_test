@@ -73,13 +73,13 @@ class ProjectHelper:
                 name = element.find_element_by_xpath("./td[1]/a").text
                 status = element.find_element_by_xpath("./td[2]").text
                 if len(element.find_elements_by_xpath("./td[3]/i[@class='fa fa-check fa-lg']")) == 1:
-                    active = True
+                    enabled = True
                 else:
-                    active = False
+                    enabled = False
                 view_state = element.find_element_by_xpath("./td[4]").text
                 description = element.find_element_by_xpath("./td[5]").text
                 self.projects_cache.append(
-                    Project(id=project_id, name=name, status=status, active=active, view_state=view_state,
+                    Project(id=project_id, name=name, status=status, enabled=enabled, view_state=view_state,
                             description=description)
                 )
         return list(self.projects_cache)
