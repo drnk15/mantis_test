@@ -20,10 +20,10 @@ class ProjectHelper:
     def add_new_project(self, project):
         wd = self.app.wd
         self.open_manage_proj_page()
-        wd.find_element_by_xpath("//button[text()='Создать новый проект']").click()
+        wd.find_element_by_xpath("//button[text()='Create New Project']").click()
         self.fill_project_form(project)
-        wd.find_element_by_xpath("//input[@value='Добавить проект']").click()
-        wd.find_element_by_link_text("Продолжить").click()
+        wd.find_element_by_xpath("//input[@value='Add Project']").click()
+        wd.find_element_by_link_text("Proceed").click()
         self.projects_cache = None
 
     def count(self):
@@ -34,15 +34,15 @@ class ProjectHelper:
 
     def check_for_test_project(self):
         if self.count() == 0:
-            self.add_new_project(Project(name='test', status='в разработке', inherit=True, view_state='публичный',
+            self.add_new_project(Project(name='test', status='development', inherit=True, view_state='public',
                                          description='sdfgadga'))
 
     def delete_project(self, project):
         wd = self.app.wd
         self.open_manage_proj_page()
         wd.find_element_by_xpath(f"//td/a[text()='{project.name}']").click()
-        wd.find_element_by_css_selector("input[value='Удалить проект']").click()
-        wd.find_element_by_css_selector("input[value='Удалить проект']").click()
+        wd.find_element_by_css_selector("input[value='Delete Project']").click()
+        wd.find_element_by_css_selector("input[value='Delete Project']").click()
         self.projects_cache = None
 
     def fill_project_form(self, project):

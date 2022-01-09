@@ -10,10 +10,10 @@ class SessionHelper:
         wd.find_element_by_css_selector('input[name="username"]').send_keys(username)
         # в версии mantisbt-2.25.2 интерфейс логина отличается от показанного в занятии
         # поле ввода пароля выводится после подтверждения имени пользователя
-        wd.find_element_by_css_selector('input[value="Вход"]').click()
+        wd.find_element_by_css_selector('input[value="Login"]').click()
         wd.find_element_by_css_selector('input[name="password"]').click()
         wd.find_element_by_css_selector('input[name="password"]').send_keys(password)
-        wd.find_element_by_css_selector('input[value="Вход"]').click()
+        wd.find_element_by_css_selector('input[value="Login"]').click()
 
     def is_logged_in(self):
         wd = self.app.wd
